@@ -171,3 +171,11 @@ down34 = out34 < out34[1]
 mycolor34 = up34 ? color.rgb(126, 69, 3) : down34 ? color.rgb(251, 157, 80) : color.rgb(249, 195, 133)
 plot(out34 and ema34plot ? out34 : na, title='EMA34', color=mycolor34, style=plot.style_line, linewidth=2)
 
+
+###
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Steversteves
+// Some Stuff added by @seatrips
+// Also Credits to https://chat.openai.com/
+// Inspired By http://www.bitcoinsmartmoney.com/ & https://bitcoin.live/
+###
