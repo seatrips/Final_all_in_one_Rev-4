@@ -1,7 +1,4 @@
-# Final_all_in_one_Rev-4
-All in one one pine script
-
-
+```
 //@version=5
 indicator("Final Directional Sentiment S&R EMA SMA rev 4", shorttitle="DSI-AIO", overlay=true)
 
@@ -173,3 +170,4 @@ up34 = out34 > out34[1]
 down34 = out34 < out34[1]
 mycolor34 = up34 ? color.rgb(126, 69, 3) : down34 ? color.rgb(251, 157, 80) : color.rgb(249, 195, 133)
 plot(out34 and ema34plot ? out34 : na, title='EMA34', color=mycolor34, style=plot.style_line, linewidth=2)
+
