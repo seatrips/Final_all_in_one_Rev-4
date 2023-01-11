@@ -61,15 +61,20 @@ plot(highest, "RorS", color = highestcolor, linewidth=4)
 
 confirmOpen = input(true, title="Require Open above/below Close for Confirmation")
 
-//signal once start
+//######## Signal Once Start ########
+
 var isLong = false
 var isShort = false
 
 //Long
+
 long = not isLong and (close > hi) and (roc > 0 and close[1] < close ? 1 : 0)
 
 //Short
+
 short = not isShort and (close < lo) and (roc < 0 and close[1] > close ? 1 : 0)
+
+//if if
 
 if (long)
     isLong := true
@@ -79,7 +84,7 @@ if (short)
     isLong := false
     isShort := true
 
-//signal once end
+//######## Signal Once End ########
 
 // Determine Colour 
 
@@ -88,7 +93,6 @@ color candlecolor = closeabove and not long ? bull : closebelow and not short ? 
 // Set candle colors
 
 barcolor(candlecolor)
-
 
 //plot signals on chart after confirmation
 
