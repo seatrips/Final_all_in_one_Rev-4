@@ -1,7 +1,7 @@
 ```
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 
-// Price Change
+// Movement Alerts
 // © domsito
 
 // Directional Sentiment
@@ -70,11 +70,11 @@ color fillfinal = closeabove ? fillcolorbull : closebelow ? fillcolorbear : midd
 
 //Ribbon Plots
 
-hir = plot(hi, color = color.new(hicolor, 98))
-lor = plot(lo, color = color.new(locolor, 98))
+hir = plot(hi, "ribbon", color = color.new(hicolor, 98))
+lor = plot(lo, "ribbon",color = color.new(locolor, 98))
 
-plot(cl, color = color.new(clcolor, 98))
-plot(op, color = color.new(opcolor, 98))
+plot(cl, "ribbon",color = color.new(clcolor, 98))
+plot(op, "ribbon",color = color.new(opcolor, 98))
 
 // Fills
 
@@ -87,7 +87,7 @@ plot(highest, "RorS", color = highestcolor, linewidth=4)
 
 confirmOpen = input(true, title="Require Open above/below Close for Confirmation")
 
-//signal once start
+//signal once
 
 var isLong = false
 var isShort = false
@@ -108,7 +108,45 @@ if (short)
     isLong := false
     isShort := true
 
-//signal once end
+// Compare the current values of each SMA to its previous value and create a signal that shows whether the slope of each SMA is going up or going down
+
+ema10 = ta.ema(close, 10)
+sma20 = ta.sma(close, 20)
+ema34 = ta.ema(close, 34)
+sma50 = ta.sma(close, 50)
+sma200 = ta.sma(close, 200)
+
+// Create variables to store the previous values of each SMA
+
+prev_ema10 = ema10[1]
+prev_sma20 = sma20[1]
+prev_ema34 = ema34[1]
+prev_sma50 = sma50[1]
+prev_sma200 = sma200[1]
+
+var isGoodlong= false
+var isGoodshort = false
+
+//Good
+
+Goodlong = not isGoodlong and (ema10 > prev_ema10 and sma20 > prev_sma20 and ema34 > prev_ema34 and sma50 > prev_sma50 and sma200 > prev_sma200) and (ema10 < close) and ema10 > sma20 and sma20 > ema34 and ema34 > sma50 and sma50 > sma200 ? 1 : 0
+
+//Bad
+
+Goodshort = not isGoodshort and (ema10 < prev_ema10 and sma20 < prev_sma20 and ema34 < prev_ema34 and sma50 < prev_sma50 and sma200 < prev_sma200) and (sma200 > close) and sma200 > sma50 and sma50 > ema34 and ema34 > sma20 and sma20 > ema10 ? -1 : 0
+
+if (Goodlong)
+    isGoodlong := true
+    isGoodshort := false
+
+if (Goodshort)
+    isGoodlong:= false
+    isGoodshort := true
+
+// Plot the signal on the chart with different colors based on the value of the signal
+
+plotshape(Goodlong, style=shape.labelup, color = color.orange, text="GL", textcolor=color.blue, location=location.bottom)
+plotshape(Goodshort, style=shape.labeldown, color = color.blue, text="GS", textcolor=color.orange, location=location.bottom)
 
 // Determine Colour 
 
@@ -117,7 +155,6 @@ color candlecolor = closeabove and not long ? bull : closebelow and not short ? 
 // Set candle colors
 
 barcolor(candlecolor)
-
 
 //plot signals on chart after confirmation
 
@@ -131,8 +168,8 @@ alertcondition(short and (not confirmOpen or close < open), title="Sell Signal A
 
 // show the buy and sell signals
 
-bgcolor(long and (not confirmOpen or close > open) ? color.rgb(7, 250, 15, 91) : na, title="background buy confirmed")
-bgcolor(short and (not confirmOpen or close < open) ? color.rgb(255, 153, 0, 92) : na, title="background sell confirmed")
+bgcolor(long and (not confirmOpen or close > open) ? color.rgb(7, 250, 15, 93) : na, title="background buy confirmed")
+bgcolor(short and (not confirmOpen or close < open) ? color.rgb(255, 153, 0, 93) : na, title="background sell confirmed")
 
 //make labels show up next to lines
 
@@ -173,85 +210,73 @@ len200 = input.int(200, minval=1, title='SMA 200 Length')
 
 //EMA 10
 
-out10 = ta.sma(src, len10)
+up10_color = input(color.rgb(3, 124, 21), "Up10 Color")
+down10_color = input(color.rgb(3, 154, 21), "Down10 Color")
+default10_color = input(color.rgb(3, 174, 21), "Default10 Color")
+
+out10 = ta.ema(src, len10)
 up10 = out10 > out10[1]
 down10 = out10 < out10[1]
-mycolor10 = up10 ? color.rgb(4, 146, 2) : down10 ? color.rgb(4, 166, 2) : color.rgb(4, 186, 2)
+mycolor10 = up10 ? up10_color : down10 ? down10_color : default10_color
 plot(out10 and ema10plot ? out10 : na, title='EMA10', color=mycolor10, style=plot.style_line, linewidth=1)
 
 //SMA 20
 
+// Define color variables as inputs
+up20_color = input(color.rgb(224, 64, 251), "Up20 Color")
+down20_color = input(color.rgb(224, 94, 251), "Down20 Color")
+default20_color = input(color.rgb(233, 124, 223), "Default20 Color")
+
+// Use the color variables in your code
 out20 = ta.sma(src, len20)
 up20 = out20 > out20[1]
 down20 = out20 < out20[1]
-mycolor20 = up20 ? color.rgb(224, 64, 251) : down20 ? color.rgb(224, 84, 251) : color.rgb(233, 104, 223)
+mycolor20 = up20 ? up20_color : down20 ? down20_color : default20_color
 plot(out20 and sma20plot ? out20 : na, title='SMA20', color=mycolor20, style=plot.style_line, linewidth=1)
 
 //EMA 34
 
-out34 = ta.ema(src, len34)
+up34_color = input(color.rgb(255, 152, 0), "Up34 Color")
+down34_color = input(color.rgb(255, 182, 0), "Down34 Color")
+default34_color = input(color.rgb(255, 212, 0), "Default34 Color")
+
+out34 = ta.ema(src, 34)
 up34 = out34 > out34[1]
 down34 = out34 < out34[1]
-mycolor34 = up34 ? color.rgb(251, 120, 80) : down34 ? color.rgb(251, 140, 80) : color.rgb(251, 160, 80)
+mycolor34 = up34 ? up34_color : down34 ? down34_color : default34_color
 plot(out34 and ema34plot ? out34 : na, title='EMA34', color=mycolor34, style=plot.style_line, linewidth=1)
+
 
 //SMA 50
 
+// Define color variables as inputs
+up50_color = input(color.rgb(148, 34, 7), "Up50 Color")
+down50_color = input(color.rgb(148, 64, 7), "Down50 Color")
+default50_color = input(color.rgb(148, 94, 7), "Default50 Color")
+
+// Use the color variables in your code
 out50 = ta.sma(src, len50)
 up50 = out50 > out50[1]
 down50 = out50 < out50[1]
-mycolor50 = up50 ? color.rgb(155, 70, 5) : down50 ? color.rgb(182, 90, 5) : color.rgb(207, 100, 6)
+mycolor50 = up50 ? up50_color : down50 ? down50_color : default50_color
 plot(out50 and sma50plot ? out50 : na, title='SMA50', color=mycolor50, style=plot.style_circles, linewidth=2)
 
 //SMA 200
 
+// Define color variables as inputs
+// Define color variables as inputs
+up200_color = input(color.rgb(7, 39, 198), "Up200 Color")
+down200_color = input(color.rgb(7, 69, 198), "Down200 Color")
+default200_color = input(color.rgb(7, 99, 198), "Default200 Color")
+
+// Use the color variables in your code
 out200 = ta.sma(src, len200)
-up200 = out200 > out200[1]
-down200 = out200 < out200[1]
-mycolor200 = up200 ? color.rgb(6, 90, 159) : down200 ? color.rgb(6, 110, 159) : color.rgb(6, 130, 159)
+up200 = out200 > out20[1]
+down200 = out200 < out20[1]
+mycolor200 = up200 ? up200_color : down200 ? down200_color : default200_color
 plot(out200 and sma200plot ? out200 : na, title='SMA200', color=mycolor200, style=plot.style_circles, linewidth=2)
 
-// Compare the current values of each SMA to its previous value and create a signal that shows whether the slope of each SMA is going up or going down
-
-ema10 = ta.ema(close, 10)
-sma20 = ta.sma(close, 20)
-ema34 = ta.ema(close, 34)
-sma50 = ta.sma(close, 50)
-sma200 = ta.sma(close, 200)
-
-// Create variables to store the previous values of each SMA
-
-prev_ema10 = ema10[1]
-prev_sma20 = sma20[1]
-prev_ema34 = ema34[1]
-prev_sma50 = sma50[1]
-prev_sma200 = sma200[1]
-
-var isGoodlong= false
-var isGoodshort = false
-
-//Good
-
-Goodlong = not isGoodlong and (ema10 > prev_ema10 and sma20 > prev_sma20 and ema34 > prev_ema34 and sma50 > prev_sma50 and sma200 > prev_sma200) and (ema10 < close) ? 1 : 0
-
-//Bad
-
-Goodshort = not isGoodshort and (ema10 < prev_ema10 and sma20 < prev_sma20 and ema34 < prev_ema34 and sma50 < prev_sma50 and sma200 < prev_sma200) and (sma200 > close) ? -1 : 0
-
-if (Goodlong)
-    isGoodlong := true
-    isGoodshort := false
-
-if (Goodshort)
-    isGoodlong:= false
-    isGoodshort := true
-
-// Plot the signal on the chart with different colors based on the value of the signal
-
-plotshape(Goodlong, style=shape.labelup, color = color.orange, text="GL", textcolor=color.blue, location=location.bottom)
-plotshape(Goodshort, style=shape.labeldown, color = color.blue, text="GS", textcolor=color.orange, location=location.bottom)
-
-//Movement Alerts
+//Movement Alerts by © domsito
 
 max_bars_back(time, 5000)
 
