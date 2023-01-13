@@ -68,6 +68,18 @@ color lowestcolor = pabelowlow ? neutral : standard
 color highestcolor = paabovehigh ? standard : neutral
 color fillfinal = closeabove ? fillcolorbull : closebelow ? fillcolorbear : middle ? fillcolorneutral : na 
 
+//Ribbon Plots
+
+hir = plot(hi, color = hicolor)
+lor = plot(lo, color = locolor)
+
+plot(cl, color = clcolor)
+plot(op, color = opcolor)
+
+// Fills
+
+fill(hir, lor, color = fillfinal, editable=true)
+
 // Band Plots 
 
 plot(lowest, "RorS", color = lowestcolor, linewidth=4)
@@ -130,8 +142,13 @@ offset_val = input(title='Label Offset', defval=0)
 
 // Calculate support and resistance levels
 
-resistance = ta.highest(high, 230)
-support = ta.lowest(low, 230)
+resistance = ta.highest(high, lengthInput)
+support = ta.lowest(low, lengthInput)
+
+//len Support Resistance
+
+lenresistance = input.int(90, minval=60,title='RESISTANCE length')
+lensupport = input.int(90, minval=60, title='SUPPORT length')
 
 // Plot support and resistance lines
 
