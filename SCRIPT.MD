@@ -211,6 +211,46 @@ down200 = out200 < out200[1]
 mycolor200 = up200 ? color.rgb(6, 90, 159) : down200 ? color.rgb(6, 110, 159) : color.rgb(6, 130, 159)
 plot(out200 and sma200plot ? out200 : na, title='SMA200', color=mycolor200, style=plot.style_circles, linewidth=2)
 
+// Compare the current values of each SMA to its previous value and create a signal that shows whether the slope of each SMA is going up or going down
+
+ema10 = ta.ema(close, 10)
+sma20 = ta.sma(close, 20)
+ema34 = ta.ema(close, 34)
+sma50 = ta.sma(close, 50)
+sma200 = ta.sma(close, 200)
+
+// Create variables to store the previous values of each SMA
+
+prev_ema10 = ema10[1]
+prev_sma20 = sma20[1]
+prev_ema34 = ema34[1]
+prev_sma50 = sma50[1]
+prev_sma200 = sma200[1]
+
+var isGoodlong= false
+var isGoodshort = false
+
+//Good
+
+Goodlong = not isGoodlong and (ema10 > prev_ema10 and sma20 > prev_sma20 and ema34 > prev_ema34 and sma50 > prev_sma50 and sma200 > prev_sma200) and (ema10 < close) ? 1 : 0
+
+//Bad
+
+Goodshort = not isGoodshort and (ema10 < prev_ema10 and sma20 < prev_sma20 and ema34 < prev_ema34 and sma50 < prev_sma50 and sma200 < prev_sma200) and (sma200 > close) ? -1 : 0
+
+if (Goodlong)
+    isGoodlong := true
+    isGoodshort := false
+
+if (Goodshort)
+    isGoodlong:= false
+    isGoodshort := true
+
+// Plot the signal on the chart with different colors based on the value of the signal
+
+plotshape(Goodlong, style=shape.labelup, color = color.orange, text="GL", textcolor=color.blue, location=location.bottom)
+plotshape(Goodshort, style=shape.labeldown, color = color.blue, text="GS", textcolor=color.orange, location=location.bottom)
+
 //Movement Alerts
 
 max_bars_back(time, 5000)
