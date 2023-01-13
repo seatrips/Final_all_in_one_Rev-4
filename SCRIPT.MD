@@ -70,11 +70,11 @@ color fillfinal = closeabove ? fillcolorbull : closebelow ? fillcolorbear : midd
 
 //Ribbon Plots
 
-hir = plot(hi, color = hicolor)
-lor = plot(lo, color = locolor)
+hir = plot(hi, color = color.new(hicolor, 98))
+lor = plot(lo, color = color.new(locolor, 98))
 
-plot(cl, color = clcolor)
-plot(op, color = opcolor)
+plot(cl, color = color.new(clcolor, 98))
+plot(op, color = color.new(opcolor, 98))
 
 // Fills
 
