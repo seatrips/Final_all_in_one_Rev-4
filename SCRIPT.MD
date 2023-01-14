@@ -149,6 +149,11 @@ if (Goodshort)
 plotshape(Goodlong, style=shape.labelup, color = color.orange, text="GL", textcolor=color.blue, location=location.bottom)
 plotshape(Goodshort, style=shape.labeldown, color = color.blue, text="GS", textcolor=color.orange, location=location.bottom)
 
+// Alert Conditions
+
+alertcondition(Goodlong, title="GL", message="The Moving Averages are lined-up Good for a Long if all other conditions are Good also")
+alertcondition(Goodshort, title="GS", message="The Moving Averages are lined-up Good for a Short if all other conditions are Good also")
+
 // Determine Colour 
 
 color candlecolor = closeabove and not long ? bull : closebelow and not short ? bear : middle ? neutral : long ? standard : short ? neutral: na
@@ -375,6 +380,9 @@ if (math.abs(close-lastAlertValue) >= alertDelta) and ((time - lastAlertTime)/10
 
 plot(lastAlertValue, "last alert value", display = display.data_window)
 plot((time - lastAlertTime)/1000.0, "Seconds since last alert", display = display.data_window)
+
+
+
 ```
 
 
