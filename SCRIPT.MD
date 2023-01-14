@@ -14,6 +14,7 @@
 // BitcoinSmartMoney & BitcoinLive
 
 //@version=5
+
 indicator("Final DS S&R EMA SMA ROC PC rev 4", shorttitle="FDS", overlay=true)
 
 lengthInput = input.int(150, "Length", minval = 2)
@@ -70,11 +71,11 @@ color fillfinal = closeabove ? fillcolorbull : closebelow ? fillcolorbear : midd
 
 //Ribbon Plots
 
-hir = plot(hi, "ribbon", color = color.new(hicolor, 98))
-lor = plot(lo, "ribbon",color = color.new(locolor, 98))
+hir = plot(hi, "hi ribbon", color = color.new(hicolor, 98))
+lor = plot(lo, "lo ribbon",color = color.new(locolor, 98))
 
-plot(cl, "ribbon",color = color.new(clcolor, 98))
-plot(op, "ribbon",color = color.new(opcolor, 98))
+plot(cl, "cl ribbon",color = color.new(clcolor, 98))
+plot(op, "op ribbon",color = color.new(opcolor, 98))
 
 // Fills
 
@@ -140,7 +141,7 @@ if (Goodlong)
     isGoodshort := false
 
 if (Goodshort)
-    isGoodlong:= false
+    isGoodlong := false
     isGoodshort := true
 
 // Plot the signal on the chart with different colors based on the value of the signal
@@ -210,9 +211,13 @@ len200 = input.int(200, minval=1, title='SMA 200 Length')
 
 //EMA 10
 
+// Define color variables as inputs
+
 up10_color = input(color.rgb(3, 124, 21), "Up10 Color")
 down10_color = input(color.rgb(3, 154, 21), "Down10 Color")
 default10_color = input(color.rgb(3, 174, 21), "Default10 Color")
+
+// Use the color variables in your code
 
 out10 = ta.ema(src, len10)
 up10 = out10 > out10[1]
@@ -223,11 +228,13 @@ plot(out10 and ema10plot ? out10 : na, title='EMA10', color=mycolor10, style=plo
 //SMA 20
 
 // Define color variables as inputs
+
 up20_color = input(color.rgb(224, 64, 251), "Up20 Color")
 down20_color = input(color.rgb(224, 94, 251), "Down20 Color")
 default20_color = input(color.rgb(233, 124, 223), "Default20 Color")
 
 // Use the color variables in your code
+
 out20 = ta.sma(src, len20)
 up20 = out20 > out20[1]
 down20 = out20 < out20[1]
@@ -236,9 +243,13 @@ plot(out20 and sma20plot ? out20 : na, title='SMA20', color=mycolor20, style=plo
 
 //EMA 34
 
+// Define color variables as inputs
+
 up34_color = input(color.rgb(255, 152, 0), "Up34 Color")
 down34_color = input(color.rgb(255, 182, 0), "Down34 Color")
 default34_color = input(color.rgb(255, 212, 0), "Default34 Color")
+
+// Use the color variables in your code
 
 out34 = ta.ema(src, 34)
 up34 = out34 > out34[1]
@@ -246,15 +257,16 @@ down34 = out34 < out34[1]
 mycolor34 = up34 ? up34_color : down34 ? down34_color : default34_color
 plot(out34 and ema34plot ? out34 : na, title='EMA34', color=mycolor34, style=plot.style_line, linewidth=1)
 
-
 //SMA 50
 
 // Define color variables as inputs
+
 up50_color = input(color.rgb(148, 34, 7), "Up50 Color")
 down50_color = input(color.rgb(148, 64, 7), "Down50 Color")
 default50_color = input(color.rgb(148, 94, 7), "Default50 Color")
 
 // Use the color variables in your code
+
 out50 = ta.sma(src, len50)
 up50 = out50 > out50[1]
 down50 = out50 < out50[1]
@@ -264,17 +276,30 @@ plot(out50 and sma50plot ? out50 : na, title='SMA50', color=mycolor50, style=plo
 //SMA 200
 
 // Define color variables as inputs
-// Define color variables as inputs
+
 up200_color = input(color.rgb(7, 39, 198), "Up200 Color")
 down200_color = input(color.rgb(7, 69, 198), "Down200 Color")
 default200_color = input(color.rgb(7, 99, 198), "Default200 Color")
 
 // Use the color variables in your code
+
 out200 = ta.sma(src, len200)
 up200 = out200 > out20[1]
 down200 = out200 < out20[1]
 mycolor200 = up200 ? up200_color : down200 ? down200_color : default200_color
 plot(out200 and sma200plot ? out200 : na, title='SMA200', color=mycolor200, style=plot.style_circles, linewidth=2)
+
+// Create input field for average line
+
+averageLineInput = input(true, title="Average Line")
+
+//Calculate average line
+
+averageLine = (ema10 + ema34 + sma20 + sma50 + sma200) / 5
+
+// Plot the average line
+
+plot(averageLine, color = color.yellow, title="Average", style=plot.style_circles, linewidth=2)
 
 //Movement Alerts by © domsito
 
